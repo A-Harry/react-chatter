@@ -23,13 +23,14 @@ const chatrooms = [
     { _id: 3, name: 'Saif' },
 ]
 
-export class ChatroomList extends Component {
+export default class ChatroomList extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             chatrooms: [],
             addChatroom: '',
+            isAuthenticated: false,
             submitted: false,
             loading: false,
             error: ''
@@ -45,6 +46,7 @@ export class ChatroomList extends Component {
       }
 
     handleChange = event => {
+        event.preventDefault();
         this.setState({
           [event.target.id]: event.target.value
         });
@@ -52,6 +54,7 @@ export class ChatroomList extends Component {
 
 
     handleChat = (event) => {
+        event.preventDefault();
         this.setState({
             [event.target.id]: event.target.value
         });
@@ -136,7 +139,7 @@ export class ChatroomList extends Component {
                                             value={this.state.currentChatroom}
                                             onChange={this.handleChange}
                                             type="text"
-                                        />
+                                        /><br></br>
                                         <Button
                                             type="submit"
                                             variant="contained"
@@ -160,5 +163,3 @@ export class ChatroomList extends Component {
         )
     }
 }
-
-export default ChatroomList

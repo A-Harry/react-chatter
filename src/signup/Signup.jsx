@@ -15,7 +15,8 @@ export default class Signup extends Component {
       confirm_password_signup: '',
       error: '',
       submitted: false,
-      loading: false
+      loading: false,
+      isAuthenticated: false
     };
   }
 

@@ -1,20 +1,34 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import { TextField, Button } from '@material-ui/core'
+import axios from 'axios';
 import logo from '../assets/logo2.png';
 
-class Login extends Component {
+export default class Login extends Component {
 
   constructor(props) {
     super(props);
 
     this.state = {
       username: "",
-      password: ""
+      password: "",
+      isAuthenticated: false,
+      error: "",
+
     };
   }
 
   validateForm() {
     return this.state.username.length > 0 && this.state.password.length > 0;
+  }
+
+  serializeForm() {
+    return (
+      {
+        username: this.state.username,
+        password: this.state.password
+      }
+    )
   }
 
   handleChange = event => {
@@ -25,6 +39,20 @@ class Login extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
+    axios.post('http://localhost:3002/api/login/', this.serializeForm())
+      .then(response => {
+          localStorage.setItem('username', this.state.username)
+          localStorage.setItem('token', response.data.token)
+      })
+      .catch((err) => {
+        this.setState({
+          error: 'Try Again!'
+        })
+        return (
+          <Redirect to="/login" />
+        )
+      })
+
   }
 
   render() {
@@ -32,6 +60,7 @@ class Login extends Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
+          <p>{this.state.error}</p>
           <div className="form">
             <form onSubmit={this.handleSubmit}>
               <TextField
@@ -45,7 +74,7 @@ class Login extends Component {
                 onChange={this.handleChange}
                 type="text"
               />
-
+              
               <TextField
                 name="password"
                 id="password"
@@ -77,4 +106,3 @@ class Login extends Component {
   }
 }
 
-export default Login;

@@ -27,7 +27,6 @@
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
-
 #add-chatroom{
   background-color: rgb(214, 196, 240);
   text-align: center;
@@ -39,6 +38,27 @@
 
 #table-header{
   background-color: rgb(190, 157, 235);
+}
+
+.newMessage{
+  width: 100%;
+}
+
+#chat-button{
+  width: 100%;
+  height: 70px;
+  margin-top: 10px;
+}
+
+#chat-window{
+  width: 90%;
+}
+
+#newMessage{
+  width: 90%;
+  display: inline-block;
+  padding: 30px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(245, 28, 234, 0.658);
 }
 
 .root{

@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import NavigationIcon from '@material-ui/icons/Navigation';
 import AddIcon from '@material-ui/icons/Add';
-import DeleteIcon from '@material-ui/icons/Delete';
 import Fab from '@material-ui/core/Fab';
 import { TextField, Button } from '@material-ui/core'
 import Table from '@material-ui/core/Table';
@@ -16,12 +15,9 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import logo from '../assets/logo2.png';
 import axios from 'axios';
-
-const chatrooms = [
-    { _id: 1, name: 'Saif' },
-    { _id: 2, name: 'Saif' },
-    { _id: 3, name: 'Saif' },
-]
+import { Redirect } from 'react-router-dom';
+import socket from '../socket-io-client'
+import Admin from '../admin/Admin'
 
 export default class ChatroomList extends Component {
 
@@ -30,36 +26,49 @@ export default class ChatroomList extends Component {
         this.state = {
             chatrooms: [],
             addChatroom: '',
+            client: socket(),
             isAuthenticated: false,
-            submitted: false,
+            isAdmin: false,
             loading: false,
-            error: ''
         };
+
+        this.handleChat = this.handleChat.bind(this)
+        this.handleChange = this.handleChange.bind(this)
+        this.handleDelete = this.handleDelete.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this)
     }
 
-    componentDidMount() {
+    componentWillMount() {
+        this.loadChatrooms();
+        this.autoAuth();
+    }
+
+    componentWillUpdate() {
         this.loadChatrooms();
     }
 
-    validateForm() {
-        return this.state.addChatroom.length > 0;
-      }
 
-    handleChange = event => {
-        event.preventDefault();
-        this.setState({
-          [event.target.id]: event.target.value
-        });
-      }
-
-
-    handleChat = (event) => {
-        event.preventDefault();
-        this.setState({
-            [event.target.id]: event.target.value
-        });
+    autoAuth() {
+        let token = localStorage.getItem('token')
+        let username = localStorage.getItem('username')
+        if (token != null) {
+            this.setState({ isAuthenticated: true })
+        };
+        if (username === 'admin') {
+            this.setState({ isAdmin: true })
+        }
     }
-
+    
+    
+    serializeForm() {
+        return (
+            {
+                user: localStorage.getItem('username'),
+                room: this.state.addChatroom
+            }
+        )
+    }
+    
     loadChatrooms = () => {
         axios({
             method: 'get',
@@ -69,31 +78,67 @@ export default class ChatroomList extends Component {
                 this.setState({
                     chatrooms: response.data.chatrooms
                 })
-                console.log(response.data.chatrooms)
             })
     }
 
+    validateForm() {
+        return this.state.addChatroom.length > 0;
+    }
+
+    handleChange = event => {
+        event.preventDefault();
+        this.setState({
+            [event.target.id]: event.target.value
+        });
+    }
+
+
+    handleSubmit = event => {
+        event.preventDefault();
+        if (window.confirm("Are you sure you want to add this chatroom?")) {
+            let chatroomName = this.state.addChatroom;
+            this.state.client.join(chatroomName);
+        }
+
+    }
 
     handleDelete = (event) => {
         event.preventDefault();
-        if (window.confirm("Are you sure to delete this chatroom?")) {
-            console.log("Implement delete functionality here");
-        }
-        let id = event.currentTarget.value;
-        this.setState({ loading: true });
-
-        axios({
-            method: 'delete',
-            url: 'http://localhost:3002/api/chatrooms/' + id,
-        })
-            .then(response => {
-                console.log(response.status === 200)
-                console.log("Chatroom Deleted!")
-                this.setState({ loading: false });
+        if (window.confirm("Are you sure you want to delete this chatroom?")) {
+            let id = event.currentTarget.value;
+            axios({
+                method: 'delete',
+                url: 'http://localhost:3002/api/chatrooms/' + id,
+                headers: {
+                    'Authorizattion' : localStorage.getItem('token')
+                }
             })
+                .then(response => {
+                    console.log("Chatroom Deleted!")
+                })
+        }
+    }
+
+    handleChat = (event) => {
+        event.preventDefault();
+        let id = event.currentTarget.value;
+        this.props.history.push("/chatrooms/" + id);
     }
 
     render() {
+        if (!this.state.isAuthenticated) {
+            console.log(this.state.isAuthenticated)
+            return (
+                <Redirect to='/login' />
+            )
+        }
+
+        if(this.state.isAdmin){
+            return(
+                <Admin />
+            )
+        }
+
         return (
             <div className="App">
                 <header className="App-header">
@@ -107,51 +152,45 @@ export default class ChatroomList extends Component {
                                         <TableCell align="right">Action</TableCell>
                                     </TableRow>
                                 </TableHead>
-                                <TableBody>
+                                <TableBody style={({backgroundColor: 'rgb(214, 196, 240)'})} >
                                     {this.state.chatrooms.map(chatroom => (
                                         <TableRow key={chatroom._id}>
                                             <TableCell component="th" scope="chatroom">
                                                 {chatroom.name}
                                             </TableCell>
                                             <TableCell align="right">
-                                                <Fab variant="extended" color="primary" aria-label="Chat" className={'chatIcon'} value={chatroom._id}>
+                                                <Fab variant="extended" color="primary" aria-label="Chat" className='chatIcon' onClick={this.handleChat} value={chatroom._id}>
                                                     <NavigationIcon />
-                                                </Fab>
-                                                <Fab variant="extended" color="secondary" aria-label="Delete" className={'chatIcon'} onClick={this.handleDelete} value={chatroom._id}>
-                                                    <DeleteIcon />
                                                 </Fab>
                                             </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
                             </Table>
-                            <ExpansionPanel id="add-chatroom">
+                            <ExpansionPanel id="add_chatroom">
                                 <ExpansionPanelSummary expandIcon={<AddIcon />}>
                                     <Typography>Add Chatroom</Typography>
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails>
-                                    <form className="form" onSubmit={this.handleSubmit}>
+                                    <form className="form" onSubmit={this.handleSubmit} autoComplete='off'>
                                         <TextField
                                             name="add-chatroom-name"
                                             id="addChatroom"
                                             className='formControl'
                                             placeholder="Enter Chatroom Name"
-                                            value={this.state.currentChatroom}
+                                            value={this.state.addChatroom}
                                             onChange={this.handleChange}
                                             type="text"
                                         /><br></br>
                                         <Button
+                                            id='add-chat-button'
                                             type="submit"
                                             variant="contained"
                                             color="primary"
                                             disabled={!this.validateForm()}
-                                        ><AddIcon />Add Chatroom</Button>
+                                        ><AddIcon />Add Chatroom</Button><br />
                                     </form>
 
-                                    {/* <Typography>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                                        sit amet blandit leo lobortis eget.
-                                    </Typography> */}
 
 
                                 </ExpansionPanelDetails>

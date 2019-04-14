@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import { TextField, Button } from '@material-ui/core'
 import axios from 'axios';
 import logo from '../assets/logo2.png';
@@ -12,9 +11,7 @@ export default class Login extends Component {
     this.state = {
       username: "",
       password: "",
-      isAuthenticated: false,
       error: "",
-
     };
   }
 
@@ -41,18 +38,15 @@ export default class Login extends Component {
     event.preventDefault();
     axios.post('http://localhost:3002/api/login/', this.serializeForm())
       .then(response => {
-          localStorage.setItem('username', this.state.username)
-          localStorage.setItem('token', response.data.token)
+        localStorage.setItem('username', this.state.username)
+        localStorage.setItem('token', response.data.token)
+        this.props.history.push("/");
       })
       .catch((err) => {
         this.setState({
           error: 'Try Again!'
         })
-        return (
-          <Redirect to="/login" />
-        )
       })
-
   }
 
   render() {
@@ -62,7 +56,7 @@ export default class Login extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <p>{this.state.error}</p>
           <div className="form">
-            <form onSubmit={this.handleSubmit}>
+            <form onSubmit={this.handleSubmit} autoComplete='off'>
               <TextField
                 name="username"
                 id="username"
@@ -74,7 +68,7 @@ export default class Login extends Component {
                 onChange={this.handleChange}
                 type="text"
               />
-              
+
               <TextField
                 name="password"
                 id="password"

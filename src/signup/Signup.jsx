@@ -16,7 +16,8 @@ export default class Signup extends Component {
       error: '',
       submitted: false,
       loading: false,
-      isAuthenticated: false
+      isAuthenticated: false,
+      errorMessage: ''
     };
   }
 
@@ -46,7 +47,7 @@ export default class Signup extends Component {
 
     axios({
       method: 'post',
-      url: 'http://localhost:8888/api/signup',
+      url: 'http://localhost:3002/api/signup',
       data: {
         username: this.state.username_signup,
         password: this.state.password_signup,
@@ -54,13 +55,15 @@ export default class Signup extends Component {
       }
     })
       .then(response => {
-        console.log(response.status === 200)
-        // if(!(response.data.message).includes("Failed")){
-        //   console.log(response.data.message)
-
-
-        // }
+          this.setState({
+            errorMessage: 'Username Added!'
+          })
       })
+      .catch(error => {
+        this.setState({
+          errorMessage: 'Username Already Exists'
+        })
+      });
 
   }
 
@@ -70,7 +73,10 @@ export default class Signup extends Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <div className="form">
-            <form onSubmit={this.handleSubmit}>
+          <p style={{color: this.state.errorMessage === 'Username Already Exists' ? 'red' : 'green'}}>
+            {this.state.errorMessage}
+          </p>
+            <form onSubmit={this.handleSubmit} autoComplete='off'>
               <TextField
                 name="username"
                 id="username_signup"
@@ -118,9 +124,8 @@ export default class Signup extends Component {
                 onChange={this.handleChange}
                 type="password"
               />
-
               <Button
-                id="loginButton"
+                id="signupButton"
                 type="submit"
                 variant="contained"
                 color="primary"

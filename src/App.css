@@ -1,3 +1,5 @@
+
+
 .App {
   text-align: center;
 }
@@ -7,7 +9,8 @@
   pointer-events: none;
   display: inline-block;
   margin-bottom: 50px;
-  margin-top: 30px;
+  margin-top: 100px;
+  height: 200px;
 }
 
 .App-header {
@@ -17,23 +20,20 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   background-color: #ead5f7;
-  width: 95%;
+  width: 95vw ;
   margin: 0 auto;
   border-radius: 30px;
   border: 2px solid #bfbfbf;
   padding-bottom: 30px;
   margin-top: 20px;
   margin-bottom: 20px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(245, 28, 234, 0.658);
+
 }
 
-#add-chatroom{
-  background-color: rgb(214, 196, 240);
+#add_chatroom{
+  background-color: rgba(28, 212, 59, 0.603);
   text-align: center;
-}
-
-#add-chatroom-textbox{
-  border: none;
 }
 
 #table-header{
@@ -52,13 +52,22 @@
 
 #chat-window{
   width: 90%;
+  margin-top: 80px;
 }
 
 #newMessage{
-  width: 90%;
+  width: 95%;
   display: inline-block;
   padding: 30px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(245, 28, 234, 0.658);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 30px;
+  margin-top: 80px;
+}
+
+#errorMessage{
+  font-size: 1em;
+  margin-top: 2em;
+  margin-bottom: 2em;
 }
 
 .root{
@@ -68,8 +77,9 @@
 
 .form {
   margin: 0 auto;
-  width: 90%;
+  width: 85vw;
   text-align: center;
+  overflow-x: hidden;
 }
 
 .formControl{
@@ -81,13 +91,40 @@
   display: inline-block;
 }
 
-#loginButton {
+#addChatroom{
+  margin-top: 20px;
+}
+
+#loginButton, #signupButton, #add-chat-button {
   width: 60%;
-  height: 50px;
+  height: 60px;
   display: inline-block;
-  margin-top: 50px;
-  display: block;
-  margin: 0 auto;
+  margin-top: 40px;
+  display: inline-block;
+  margin-bottom: 30px;
+}
+
+#chat-header{
+  width: 95vw;;
+  height: 80px;
+  position: absolute;
+  top: 20px;
+  border-radius: 30px 30px 0 0;
+  background-color: rgba(161, 155, 161, 0.664);
+}
+
+#room-name{
+  height:100%;
+  font-size: 3rem;
+}
+
+#result-table{
+  width: 100%;
+}
+
+.myMessage{
+  width: 100%;
+  margin-right: 0;
 }
 /* Position and sizing of burger button */
 .bm-burger-button {

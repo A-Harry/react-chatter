@@ -1,0 +1,24 @@
+{
+  "name": "sample-angular",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@angular/animations": "^7.2.7",
+    "@angular/cdk": "^7.3.3",
+    "@angular/material": "^7.3.3",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "hammerjs": "^2.0.8",
+    "jsonwebtoken": "^8.5.0",
+    "mongoose": "^5.4.16",
+    "nodemon": "^1.18.9",
+    "socket.io": "^2.2.0"
+  }
+}
